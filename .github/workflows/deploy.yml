@@ -37,7 +37,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}   # <- ASEGÚRATE DE QUE NO HAYA ESPACIOS AQUÍ
           tags: |
-            type=raw,value=1.0.0
+            type=raw,value=2.0.0
             type=raw,value=latest
 
       - name: Build and push Docker image
