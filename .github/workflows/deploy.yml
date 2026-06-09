@@ -35,8 +35,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }} /${{ env.IMAGE_NAME }}
-          # Definimos que use por defecto el tag de la app y "latest"
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}   # <- ASEGÚRATE DE QUE NO HAYA ESPACIOS AQUÍ
           tags: |
             type=raw,value=1.0.0
             type=raw,value=latest
