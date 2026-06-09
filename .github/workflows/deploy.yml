@@ -1,0 +1,50 @@
+name: CI/CD Pipeline to GHCR
+
+on:
+  push:
+    branches:
+      - main  # Cambiar a master si tu rama principal se llama así
+
+env:
+  REGISTRY: ghcr.io
+  # Convierte el nombre del repositorio a minúsculas dinámicamente
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: Ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: actions/login-with-registry-action@v3 # Utiliza la acción estándar de login de Github de manera segura
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }} /${{ env.IMAGE_NAME }}
+          # Definimos que use por defecto el tag de la app y "latest"
+          tags: |
+            type=raw,value=1.0.0
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
